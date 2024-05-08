@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen</title>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"
+        integrity="sha512-uaz5GpnQoE6t5echKlX8P52czvsIGgLPcvlzfvRubLZ1Hp8JemUDnbUiAahbVtPb+jUVrNETuXvAhDDF/N3M4w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+        let horaLaPaz = 0;
+        let ciudadMexico = -1; 
+        let Barcelona = 8; 
+
+        function setup() {
+            createCanvas(600, 300);
+            textAlign(CENTER, CENTER);
+            textSize(20);
+
+            createP('Configurar hora en La Paz, BCS:');
+            input = createInput('');
+            input.position(230, height + 25);
+            input.changed(actualizarHoraLaPaz);
+            frameRate(1);
+        }
+
+        function draw() {
+            background("#808080");
+            dibujarReloj(width / 4, height / 2, horaLaPaz, 'La Paz, BCS');
+            dibujarReloj(2 * width / 4, height / 2, calcularHora(horaLaPaz, ciudadMexico), 'Ciudad de México');
+            dibujarReloj(3 * width / 4, height / 2, calcularHora(horaLaPaz, Barcelona), '    Barcelona, Esp');
+        }
+
+        
+        function dibujarReloj(x, y, hora, ciudad) { 
+            stroke(0);
+            noFill();
+            ellipse(x, y, 100);
+
+            for (let i = 0; i < 12; i++) {
+                let angulo = map(i, 0, 12, 0, TWO_PI);
+                let x1 = x + cos(angulo) * 40;
+                let y1 = y + sin(angulo) * 40;
+                let x2 = x + cos(angulo) * 50;
+                let y2 = y + sin(angulo) * 50;
+                line(x1, y1, x2, y2);
+            }
+            
+            let segundero = map(second(), 0, 60, 0, TWO_PI) - HALF_PI;
+            let minutero = map(minute(), 0, 60, 0, TWO_PI) - HALF_PI;
+            let horario = map(hora % 12, 0, 12, 0, TWO_PI) - HALF_PI;
+            
+            strokeWeight(1);
+            line(x, y, x + cos(segundero) * 40, y + sin(segundero) * 40);
+            strokeWeight(2);
+            line(x, y, x + cos(minutero) * 30, y + sin(minutero) * 30);
+            strokeWeight(4);
+            line(x, y, x + cos(horario) * 20, y + sin(horario) * 20);
+            noStroke();
+            fill(0);
+            text(ciudad, x, y + 70);
+        }
+
+        
+        function actualizarHoraLaPaz() {
+            horaLaPaz = parseInt(this.value());
+        }
+
+        function calcularHora(horaBase, offset) {
+            let hora = horaBase + offset;
+            if (hora < 0) {
+                hora += 24;
+            } else if (hora >= 24) {
+                hora -= 24;
+            }
+            return hora;
+        }
+    </script>
+</body>
+
+</html>
